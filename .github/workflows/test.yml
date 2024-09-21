@@ -21,7 +21,7 @@ jobs:
           POSTGRES_USER: root
           POSTGRES_PASSWORD: shiba
           POSTGRES_DB: simple_bank
-        option: >-
+        options: >-
           --health-cmd pg_isready
           --health-interval 10s
           --health-timeout 5s
@@ -37,6 +37,12 @@ jobs:
 
     - name: Check out code into the Go module directory
       uses: actions/checkout@v2
+
+    - name: Install golang-migrate
+      run: |
+        curl -L https://github.com/golang-migrate/migrate/releases/download/4.18.1/migrate.linux-amd64.tar.gz | tar xzv
+        sudo mv migrate.linux-amd64 /usr/bin/
+        which migrate
 
     - name: Migrate DB
       run: make migrateup
