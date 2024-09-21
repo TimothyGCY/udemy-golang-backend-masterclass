@@ -41,7 +41,9 @@ jobs:
       uses: actions/checkout@v2
 
     - name: Install golang-migrate
-      run: go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+      run: |
+        go install -tags 'postgres' github.com/golang-migrate/migrate/v4/cmd/migrate@latest
+        echo "${HOME}/go/bin" >> $GITHUB_PATH
 
     - name: Migrate DB
       run: make migrateup
