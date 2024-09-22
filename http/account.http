@@ -1,0 +1,19 @@
+### Create account
+POST http://localhost:5000/accounts
+Content-Type: application/json
+
+{
+  "owner": "tim",
+  "currency": "MYR"
+}
+
+
+### Get account
+GET http://localhost:5000/accounts/17
+Content-Type: application/json
+
+
+### Get accounts
+GET http://localhost:5000/accounts?page=5&size=5
+Content-Type: application/json
+
