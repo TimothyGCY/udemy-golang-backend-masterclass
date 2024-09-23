@@ -14,6 +14,6 @@ Content-Type: application/json
 
 
 ### Get accounts
-GET http://localhost:5000/accounts?page=5&size=5
+GET http://localhost:5000/accounts?page=1&size=5
 Content-Type: application/json
 

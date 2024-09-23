@@ -2,21 +2,22 @@ package main
 
 import (
 	"database/sql"
+	"fmt"
 	"log"
 
 	_ "github.com/lib/pq"
 	"learn.bleckshiba/banking/api"
 	db "learn.bleckshiba/banking/db/sqlc"
-)
-
-const (
-	dbDriver      = "postgres"
-	dbSource      = "postgresql://root:shiba@localhost:5432/simple_bank?sslmode=disable"
-	serverAddress = "0.0.0.0:5000"
+	"learn.bleckshiba/banking/util"
 )
 
 func main() {
-	conn, err := sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig(".")
+	if err != nil {
+		log.Fatal("failed to load config:", err)
+	}
+
+	conn, err := sql.Open(config.Database.Driver, config.Database.Uri)
 	if err != nil {
 		log.Fatal("cannot connect to db:", err)
 	}
@@ -24,5 +25,5 @@ func main() {
 	store := db.NewStore(conn)
 	server := api.NewServer(store)
 
-	log.Fatal(server.Start(serverAddress))
+	log.Fatal(server.Start(fmt.Sprintf(":%s", config.App.Port)))
 }

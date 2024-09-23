@@ -7,19 +7,19 @@ import (
 	"testing"
 
 	_ "github.com/lib/pq"
-)
-
-const (
-	dbDriver = "postgres"
-	dbSource = "postgres://root:shiba@localhost:5432/simple_bank?sslmode=disable"
+	"learn.bleckshiba/banking/util"
 )
 
 var testQueries *Queries
 var testDB *sql.DB
 
 func TestMain(m *testing.M) {
-	var err error
-	testDB, err = sql.Open(dbDriver, dbSource)
+	config, err := util.LoadConfig("../..")
+	if err != nil {
+		log.Fatal("Failed to load config", err)
+	}
+
+	testDB, err = sql.Open(config.Database.Driver, config.Database.Uri)
 	if err != nil {
 		log.Fatal("Failed to connect to db", err.Error())
 	}

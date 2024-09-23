@@ -1,0 +1,6 @@
+app:
+  port: 5000
+
+database:
+  driver: postgres
+  uri: postgresql://root:shiba@localhost:5432/simple_bank?sslmode=disable

@@ -43,3 +43,9 @@ func (g *Generator) RandomMoney() float64 {
 		return money
 	}
 }
+
+func (g *Generator) RandomCurrency() string {
+	currencies := []string{"USD", "MYR"}
+	n := len(currencies)
+	return currencies[g.RandomInt(0, n-1)]
+}

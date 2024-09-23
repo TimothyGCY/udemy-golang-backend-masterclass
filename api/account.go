@@ -52,7 +52,7 @@ func (server *Server) getAccount(ctx *gin.Context) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
 			return
 		}
-		ctx.JSON(http.StatusBadRequest, errorResponse(err))
+		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
 		return
 	}
 
@@ -68,7 +68,7 @@ func (server *Server) getAccounts(ctx *gin.Context) {
 
 	accounts, err := server.store.GetAccounts(ctx, db.GetAccountsParams{
 		Limit:  int64(param.Size),
-		Offset: int64((param.Page - 1) * param.Page),
+		Offset: int64((param.Page - 1) * param.Size),
 	})
 	if err != nil {
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
