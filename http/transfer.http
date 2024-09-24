@@ -1,0 +1,10 @@
+### Transfer money
+POST http://localhost:5000/transfer
+Content-Type: application/json
+
+{
+  "fromAccount": 1,
+  "toAccount": 2,
+  "currency": "MYR",
+  "amount": 0.50
+}

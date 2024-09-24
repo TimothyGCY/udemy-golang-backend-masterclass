@@ -2,10 +2,12 @@ package util
 
 import (
 	"fmt"
-	"github.com/go-faker/faker/v4"
 	"math/rand"
 	"strconv"
 	"time"
+
+	"github.com/go-faker/faker/v4"
+	"learn.bleckshiba/banking/enum"
 )
 
 type Generator struct {
@@ -45,7 +47,7 @@ func (g *Generator) RandomMoney() float64 {
 }
 
 func (g *Generator) RandomCurrency() string {
-	currencies := []string{"USD", "MYR"}
+	currencies := enum.SupportedCurrencies()
 	n := len(currencies)
 	return currencies[g.RandomInt(0, n-1)]
 }
