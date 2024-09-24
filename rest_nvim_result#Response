@@ -1,0 +1,7 @@
+### Create user
+POST http://localhost:5000/user
+HTTP/1.1 200 OK
+
+# @_RES
+{"id":14,"username":"bleckshiba","full_name":"Timothy Goh","email":"bleckshiba@gmail.com"}
+# @_END

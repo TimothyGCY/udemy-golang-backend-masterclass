@@ -33,7 +33,7 @@ func (g *Generator) RandomInt64(min, max int64) int64 {
 }
 
 func (g *Generator) RandomName() string {
-	return faker.FirstName()
+	return fmt.Sprintf("%s %s", faker.FirstName(), faker.LastName())
 }
 
 func (g *Generator) RandomMoney() float64 {
@@ -46,8 +46,20 @@ func (g *Generator) RandomMoney() float64 {
 	}
 }
 
+func (g *Generator) RandomUsername() string {
+	return faker.Username()
+}
+
 func (g *Generator) RandomCurrency() string {
 	currencies := enum.SupportedCurrencies()
 	n := len(currencies)
 	return currencies[g.RandomInt(0, n-1)]
+}
+
+func (g *Generator) RandomEmail() string {
+	return faker.Email()
+}
+
+func (g *Generator) RandomPassword() string {
+	return faker.Password()
 }

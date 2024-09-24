@@ -1,0 +1,10 @@
+### Create user
+POST http://localhost:5000/user
+Content-Type: application/json
+
+{
+  "username": "bleckshiba",
+  "password": "timothy98",
+  "fullName": "Timothy Goh",
+  "email": "bleckshiba@gmail.com"
+}

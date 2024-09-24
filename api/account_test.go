@@ -317,7 +317,7 @@ func randomAccount() db.Account {
 	random := util.NewGenerator()
 	return db.Account{
 		ID:       random.RandomInt64(1, 1000),
-		Owner:    random.RandomName(),
+		Owner:    random.RandomUsername(),
 		Balance:  random.RandomMoney(),
 		Currency: random.RandomCurrency(),
 	}
