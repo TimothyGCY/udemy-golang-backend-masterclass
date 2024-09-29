@@ -108,7 +108,6 @@ func TestCreateAccount(t *testing.T) {
 	acc.Balance = 0.0
 
 	jsonData := fmt.Sprintf(`{"owner": "%s", "currency": "%s"}`, acc.Owner, acc.Currency)
-	fmt.Println(jsonData)
 	data := []byte(jsonData)
 
 	param := db.CreateAccountParams{
