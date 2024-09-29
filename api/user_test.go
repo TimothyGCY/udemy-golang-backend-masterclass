@@ -4,8 +4,10 @@ import (
 	"bytes"
 	"database/sql"
 	"encoding/json"
+	"fmt"
 	"net/http"
 	"net/http/httptest"
+	"reflect"
 	"testing"
 
 	"github.com/gin-gonic/gin"
@@ -16,6 +18,34 @@ import (
 	db "learn.bleckshiba/banking/db/sqlc"
 	"learn.bleckshiba/banking/util"
 )
+
+type eqCreateUserParamMatcher struct {
+	arg      db.CreateUserParams
+	password string
+}
+
+func EqCreateUserParam(arg db.CreateUserParams, password string) gomock.Matcher {
+	return &eqCreateUserParamMatcher{
+		arg: arg, password: password}
+}
+
+func (m *eqCreateUserParamMatcher) Matches(x interface{}) bool {
+	arg, ok := x.(db.CreateUserParams)
+	if !ok {
+		return false
+	}
+
+	if err := util.CheckPassword(m.password, arg.HashedPassword); err != nil {
+		return false
+	}
+
+	m.arg.HashedPassword = arg.HashedPassword
+	return reflect.DeepEqual(m.arg, arg)
+}
+
+func (m *eqCreateUserParamMatcher) String() string {
+	return fmt.Sprintf("is equal to %v", m.arg)
+}
 
 func TestCreateUser(t *testing.T) {
 	user, password := randomUser(t)
@@ -35,8 +65,15 @@ func TestCreateUser(t *testing.T) {
 				"email":    user.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
+				arg := db.CreateUserParams{
+					Username:       user.Username,
+					Email:          user.Email,
+					HashedPassword: user.HashedPassword,
+					FullName:       user.FullName,
+				}
+
 				store.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
+					CreateUser(gomock.Any(), EqCreateUserParam(arg, password)).
 					Times(1).Return(user, nil)
 			},
 			postResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -52,8 +89,14 @@ func TestCreateUser(t *testing.T) {
 				"email":    user.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
+				arg := db.CreateUserParams{
+					Username:       user.Username,
+					Email:          user.Email,
+					HashedPassword: user.HashedPassword,
+					FullName:       user.FullName,
+				}
 				store.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
+					CreateUser(gomock.Any(), EqCreateUserParam(arg, password)).
 					Times(1).Return(db.User{}, sql.ErrConnDone)
 			},
 			postResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
@@ -69,8 +112,14 @@ func TestCreateUser(t *testing.T) {
 				"email":    user.Email,
 			},
 			buildStubs: func(store *mockdb.MockStore) {
+				arg := db.CreateUserParams{
+					Username:       user.Username,
+					Email:          user.Email,
+					HashedPassword: user.HashedPassword,
+					FullName:       user.FullName,
+				}
 				store.EXPECT().
-					CreateUser(gomock.Any(), gomock.Any()).
+					CreateUser(gomock.Any(), EqCreateUserParam(arg, password)).
 					Times(1).Return(db.User{}, &pg.Error{Code: "23505"})
 			},
 			postResponse: func(t *testing.T, recorder *httptest.ResponseRecorder) {
