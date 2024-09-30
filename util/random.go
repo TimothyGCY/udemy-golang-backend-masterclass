@@ -63,3 +63,12 @@ func (g *Generator) RandomEmail() string {
 func (g *Generator) RandomPassword() string {
 	return faker.Password()
 }
+
+func (g *Generator) RandomString(length int) string {
+	var letterRunes = []rune("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+	b := make([]rune, length)
+	for i := range b {
+		b[i] = letterRunes[rand.Intn(len(letterRunes))]
+	}
+	return string(b)
+}
