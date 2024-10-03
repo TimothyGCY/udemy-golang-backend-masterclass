@@ -86,7 +86,8 @@ func TestGetAccountByID(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-	server := NewServer(store)
+	server, err := NewServer(store)
+	require.NoError(t, err)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -170,7 +171,8 @@ func TestCreateAccount(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
-	server := NewServer(store)
+	server, err := NewServer(store)
+	require.NoError(t, err)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -190,7 +192,7 @@ func TestCreateAccount(t *testing.T) {
 }
 
 func TestGetAccounts(t *testing.T) {
-	accounts := []db.Account{}
+	var accounts []db.Account
 	for i := 0; i < 20; i++ {
 		accounts = append(accounts, randomAccount())
 	}
@@ -292,7 +294,8 @@ func TestGetAccounts(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
-	server := NewServer(store)
+	server, err := NewServer(store)
+	require.NoError(t, err)
 
 	for i := range testCases {
 		tc := testCases[i]

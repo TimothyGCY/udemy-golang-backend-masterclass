@@ -4,3 +4,7 @@ app:
 database:
   driver: postgres
   uri: postgresql://root:shiba@localhost:5432/simple_bank?sslmode=disable
+
+paseto:
+  symmetric-token: thisisnotthebase
+  access-token-timeout: 15m

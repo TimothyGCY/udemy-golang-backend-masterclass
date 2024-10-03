@@ -9,7 +9,7 @@ Content-Type: application/json
 
 
 ### Get account
-GET http://localhost:5000/accounts/17
+GET http://localhost:5000/accounts/1
 Content-Type: application/json
 
 

@@ -2,6 +2,7 @@ package api
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"net/http"
 
@@ -24,15 +25,21 @@ func (server *Server) createNewTransfer(ctx *gin.Context) {
 	}
 
 	if request.FromAccountID == request.ToAccountID {
-		ctx.JSON(http.StatusBadRequest, fmt.Errorf("Invalid transaction accounts"))
+		ctx.JSON(http.StatusBadRequest, fmt.Errorf("invalid transaction accounts"))
 		return
 	}
 
-	if !server.validateAccount(ctx, request.FromAccountID, request.Currency) {
+	fromAcc, ok := server.validateAccount(ctx, request.FromAccountID, request.Currency)
+	if !ok {
 		return
 	}
 
-	if !server.validateAccount(ctx, request.ToAccountID, request.Currency) {
+	if fromAcc.Balance < request.Amount {
+		ctx.JSON(http.StatusBadRequest, fmt.Errorf("insufficient balance"))
+		return
+	}
+
+	if _, ok = server.validateAccount(ctx, request.ToAccountID, request.Currency); !ok {
 		return
 	}
 
@@ -51,22 +58,22 @@ func (server *Server) createNewTransfer(ctx *gin.Context) {
 	ctx.JSON(http.StatusOK, result)
 }
 
-func (server *Server) validateAccount(ctx *gin.Context, accountID int64, currency string) bool {
+func (server *Server) validateAccount(ctx *gin.Context, accountID int64, currency string) (*db.Account, bool) {
 	acc, err := server.store.GetAccountById(ctx, accountID)
 	if err != nil {
-		if err == sql.ErrNoRows {
+		if errors.Is(err, sql.ErrNoRows) {
 			ctx.JSON(http.StatusNotFound, errorResponse(err))
-			return false
+			return nil, false
 		}
 		ctx.JSON(http.StatusInternalServerError, errorResponse(err))
-		return false
+		return nil, false
 	}
 
 	if acc.Currency != currency {
 		err = fmt.Errorf("account [%d] currency mismatch. Was %s but %s", acc.ID, acc.Currency, currency)
 		ctx.JSON(http.StatusBadRequest, errorResponse(err))
-		return false
+		return nil, false
 	}
 
-	return true
+	return &acc, true
 }

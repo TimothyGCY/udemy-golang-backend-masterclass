@@ -23,7 +23,10 @@ func main() {
 	}
 
 	store := db.NewStore(conn)
-	server := api.NewServer(store)
+	server, err := api.NewServer(store)
+	if err != nil {
+		log.Fatal("failed to spawn server:", err)
+	}
 
 	log.Fatal(server.Start(fmt.Sprintf(":%s", config.App.Port)))
 }
