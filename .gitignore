@@ -1,3 +1,10 @@
 # IDE
 .idea/
 .vscode/
+
+# test
+*.test
+rest_nvim_result#Response
+
+# cache
+go.sum
