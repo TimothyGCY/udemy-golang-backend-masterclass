@@ -5,7 +5,6 @@ import (
 	"database/sql"
 	"encoding/json"
 	"fmt"
-	"github.com/stretchr/testify/require"
 	"net/http"
 	"net/http/httptest"
 	"reflect"
@@ -180,12 +179,10 @@ func TestCreateUser(t *testing.T) {
 		},
 	}
 
-	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-	server, err := NewServer(store)
-	require.NoError(t, err)
+	server := newTestServer(t, store)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -197,7 +194,7 @@ func TestCreateUser(t *testing.T) {
 			rqBody, err := json.Marshal(tc.body)
 			assert.NoError(t, err)
 
-			request, err := http.NewRequest(http.MethodPost, "/user", bytes.NewReader(rqBody))
+			request, err := http.NewRequest(http.MethodPost, "/api/v1/user", bytes.NewReader(rqBody))
 			assert.NoError(t, err)
 			server.router.ServeHTTP(recorder, request)
 			tc.postResponse(t, recorder)

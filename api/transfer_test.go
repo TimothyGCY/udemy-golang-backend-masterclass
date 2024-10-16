@@ -206,12 +206,10 @@ func TestNewTransfer(t *testing.T) {
 		},
 	}
 
-	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-	server, err := NewServer(store)
-	assert.NoError(t, err)
+	server := newTestServer(t, store)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -223,7 +221,7 @@ func TestNewTransfer(t *testing.T) {
 			marshal, err := json.Marshal(tc.Body)
 			assert.NoError(t, err)
 
-			request, err := http.NewRequest(http.MethodPost, "/transfer", bytes.NewReader(marshal))
+			request, err := http.NewRequest(http.MethodPost, "/api/v1/transfer", bytes.NewReader(marshal))
 			assert.NoError(t, err)
 			server.router.ServeHTTP(recorder, request)
 			tc.PostRequest(t, recorder)

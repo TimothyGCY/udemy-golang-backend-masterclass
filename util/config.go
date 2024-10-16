@@ -8,7 +8,7 @@ import (
 type Config struct {
 	App      app      `mapstructure:"app"`
 	Database database `mapstructure:"database"`
-	Paseto   paseto   `mapstructure:"paseto"`
+	Paseto   Paseto   `mapstructure:"paseto"`
 }
 
 type app struct {
@@ -20,7 +20,7 @@ type database struct {
 	Uri    string `mapstructure:"uri"`
 }
 
-type paseto struct {
+type Paseto struct {
 	SymmetricToken     string        `mapstructure:"symmetric-token"`
 	AccessTokenTimeout time.Duration `mapstructure:"access-token-timeout"`
 }

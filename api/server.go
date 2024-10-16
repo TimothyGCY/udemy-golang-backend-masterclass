@@ -15,6 +15,7 @@ type Server struct {
 	store      db.Store
 	tokenMaker token.Maker
 	router     *gin.Engine
+	config     util.Config
 }
 
 type PaginationParam struct {
@@ -22,14 +23,12 @@ type PaginationParam struct {
 	Size int32 `form:"size" binding:"required,min=5,max=50"`
 }
 
-func NewServer(store db.Store) (*Server, error) {
-	config, err := util.LoadConfig("../.")
+func NewServer(config util.Config, store db.Store) (*Server, error) {
 	tokenMaker, err := token.NewPasetoMaker(base32.HexEncoding.EncodeToString([]byte(config.Paseto.SymmetricToken)))
 	if err != nil {
 		return nil, fmt.Errorf("unable to spawn token generator: %w", err)
 	}
-	server := &Server{store: store, tokenMaker: tokenMaker}
-	router := gin.Default()
+	server := &Server{store: store, tokenMaker: tokenMaker, config: config}
 	//if err = router.SetTrustedProxies([]string{"192.168.33.121"}); err != nil {
 	//	return nil, err
 	//}
@@ -40,16 +39,23 @@ func NewServer(store db.Store) (*Server, error) {
 		}
 	}
 
-	router.POST("/user", server.createUser)
+	server.setupRouter()
 
-	router.POST("/accounts", server.createAccount)
-	router.GET("/accounts", server.getAccounts)
-	router.GET("/accounts/:id", server.getAccount)
+	return server, nil
+}
 
-	router.POST("/transfer", server.createNewTransfer)
+func (server *Server) setupRouter() {
+	router := gin.Default()
+	router.POST("/api/v1/user", server.createUser)
+	router.POST("/api/v1/login", server.loginUser)
+
+	router.POST("/api/v1/accounts", server.createAccount)
+	router.GET("/api/v1/accounts", server.getAccounts)
+	router.GET("/api/v1/accounts/:id", server.getAccount)
+
+	router.POST("/api/v1/transfer", server.createNewTransfer)
 
 	server.router = router
-	return server, nil
 }
 
 func (server *Server) Start(address string) error {

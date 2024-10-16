@@ -82,12 +82,10 @@ func TestGetAccountByID(t *testing.T) {
 		},
 	}
 
-	gin.SetMode(gin.TestMode)
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 	store := mockdb.NewMockStore(ctrl)
-	server, err := NewServer(store)
-	require.NoError(t, err)
+	server := newTestServer(t, store)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -95,7 +93,7 @@ func TestGetAccountByID(t *testing.T) {
 		t.Run(tc.name, func(t *testing.T) {
 			tc.buildStubs(store)
 			recorder := httptest.NewRecorder()
-			url := fmt.Sprintf("/accounts/%d", tc.accountID)
+			url := fmt.Sprintf("/api/v1/accounts/%d", tc.accountID)
 			request, err := http.NewRequest(http.MethodGet, url, nil)
 			require.NoError(t, err)
 			server.router.ServeHTTP(recorder, request)
@@ -171,8 +169,7 @@ func TestCreateAccount(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
-	server, err := NewServer(store)
-	require.NoError(t, err)
+	server := newTestServer(t, store)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -181,7 +178,7 @@ func TestCreateAccount(t *testing.T) {
 			tc.stubs(store)
 			recorder := httptest.NewRecorder()
 
-			request, err := http.NewRequest(http.MethodPost, "/accounts", bytes.NewBuffer(tc.arg))
+			request, err := http.NewRequest(http.MethodPost, "/api/v1/accounts", bytes.NewBuffer(tc.arg))
 			require.NoError(t, err)
 			request.Header.Set("Content-Type", "application/json")
 
@@ -294,8 +291,7 @@ func TestGetAccounts(t *testing.T) {
 	defer ctrl.Finish()
 
 	store := mockdb.NewMockStore(ctrl)
-	server, err := NewServer(store)
-	require.NoError(t, err)
+	server := newTestServer(t, store)
 
 	for i := range testCases {
 		tc := testCases[i]
@@ -305,7 +301,7 @@ func TestGetAccounts(t *testing.T) {
 
 			// Prepare HTTP request
 			recorder := httptest.NewRecorder()
-			url := fmt.Sprintf("/accounts?page=%d&size=%d", tc.currentPage, tc.pageSize)
+			url := fmt.Sprintf("/api/v1/accounts?page=%d&size=%d", tc.currentPage, tc.pageSize)
 			request, err := http.NewRequest(http.MethodGet, url, nil)
 			require.NoError(t, err)
 
