@@ -1,7 +1,7 @@
 DB_URL=postgresql://root:shiba@localhost:5432/simple_bank?sslmode=disable
 
 postgres:
-	docker run --name postgres --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=shiba -d psql
+	docker run --name psql --network bank-network -p 5432:5432 -e POSTGRES_USER=root -e POSTGRES_PASSWORD=shiba -d postgres
 
 mysql:
 	docker run --name mysql8 -p 3306:3306  -e MYSQL_ROOT_PASSWORD=secret -d mysql:8
